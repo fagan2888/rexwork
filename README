@@ -11,4 +11,4 @@ mv *.bigWig data/dm3
 # crop relationships with weak correlation
 cat FemaleLiver-Data/CytoscapeInput-edges-brown-red.txt | awk '{ if ($3 > 0.10) print; }' > FemaleLiver-Data/cropped_edges.csv
 
-python scripts/cytoscape_to_json.py FemaleLiver-Data/CytoscapeInput-nodes-brown-red.txt FemaleLiver-Data/CytoscapeInput-edges-brown-red.txt  > FemaleLiver-Data/graph.json
+python scripts/cytoscape_to_json.py --weight-filter 0.05 FemaleLiver-Data/CytoscapeInput-nodes.txt FemaleLiver-Data/CytoscapeInput-edges.txt  > FemaleLiver-Data/graph.json

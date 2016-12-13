@@ -33,6 +33,7 @@ def main():
     #					 help="Some option", type='str')
     #parser.add_argument('-u', '--useless', action='store_true', 
     #					 help='Another useless option')
+    parser.add_argument('-w', '--weight-filter', default=None, type=float)
 
     args = parser.parse_args()
 
@@ -43,10 +44,13 @@ def main():
 
     edges = pd.read_csv(args.edges_file, sep='\t')
     edges.rename(columns=edge_columns, inplace=True)
-    edges['value'] *= 100
+
+    if args.weight_filter is not None:
+        edges = edges[edges['value'] > args.weight_filter]
 
     print ('{"nodes":' +  nodes.to_json(orient='records') + "," +
             '"links":'  + edges[edge_columns.values()].to_json(orient='records') + '}')
+    print >>sys.stderr, "Num nodes:", len(nodes.index), "Num edges:", len(edges.index)
     
 
 if __name__ == '__main__':
