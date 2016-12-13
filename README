@@ -1,0 +1,14 @@
+mkdir -p data/dm3
+wget -O data/dm3/files.txt https://www.encodeproject.org/batch_download/type%3DExperiment%26status%3Dreleased%26replicates.library.biosample.donor.organism.scientific_name%3DDrosophila%2Bmelanogaster%26assay_title%3DRNA-seq
+cat data/dm3/files.txt | grep "bigWig$" | xargs -n 1 curl -O -L
+mv *.bigWig data/dm3
+
+# look at the WGCNA tutorial
+
+
+# Display the data
+
+# crop relationships with weak correlation
+cat FemaleLiver-Data/CytoscapeInput-edges-brown-red.txt | awk '{ if ($3 > 0.10) print; }' > FemaleLiver-Data/cropped_edges.csv
+
+python scripts/cytoscape_to_json.py FemaleLiver-Data/CytoscapeInput-nodes-brown-red.txt FemaleLiver-Data/CytoscapeInput-edges-brown-red.txt  > FemaleLiver-Data/graph.json
