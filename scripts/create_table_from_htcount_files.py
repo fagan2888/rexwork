@@ -3,8 +3,21 @@
 from __future__ import print_function
 
 import argparse
+import os.path as op
 import pandas as pd
 import sys
+
+def filename_only(filepath):
+    '''
+    Extract the filename without the directory and extensions.
+
+    Args:
+        filepath (str): The full filepath of the file
+
+    Returns:
+        filename (str): The filename withouth the directory and extension
+    '''
+    return op.splitext(op.basename(filepath))[0]
 
 def main():
     parser = argparse.ArgumentParser(description="""
@@ -31,12 +44,16 @@ def main():
     #					 help='Another useless option')
 
     args = parser.parse_args()
+    table = pd.read_csv(args.filenames[0], sep=args.sep, header=None)
+    table.rename(columns={1: filename_only(args.filenames[0])}, inplace=True)
 
-    for filename in args.filenames[:1]:
-        table = pd.read_csv(filename, sep=args.sep, header=None)
-        print('filename:', filename)
-        print('columns:', table.columns)
-        print("table.head():", table.head())
+    for filename in args.filenames[1:]:
+        table = table.merge(pd.read_csv(filename, sep=args.sep, header=None),
+                left_on=0, right_on=0, how='inner')
+        table.rename(columns={1: filename_only(filename)}, inplace=True)
+
+    out = table.to_csv(sep='\t')
+    print(out)
 
 if __name__ == '__main__':
     main()
