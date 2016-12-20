@@ -2,3 +2,5 @@ data
 *.swp
 *~
 .DS_Store
+CytoscapeInput-nodes.txt
+CytoscapeInput-edges.txt
