@@ -13,8 +13,14 @@ cat FemaleLiver-Data/CytoscapeInput-edges-brown-red.txt | awk '{ if ($3 > 0.10) 
 
 python scripts/cytoscape_to_json.py --weight-filter 0.05 FemaleLiver-Data/CytoscapeInput-nodes.txt FemaleLiver-Data/CytoscapeInput-edges.txt  > FemaleLiver-Data/graph.json
 
+#### Convert counts to expression graph
+
+Rscript scripts/expression_to_graph.R data/FemaleLiver-Data/GSE90056_ecoli_heatshock_normalizedcounts.txt
+
 #############################################3
 
 # https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE73673
 
 python scripts/create_table_from_htcount_files.py data/GSE7363/*.gz > data/GSE7363/whole_table.tsv
+
+

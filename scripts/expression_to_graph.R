@@ -129,8 +129,7 @@ net = blockwiseModules(datExpr, power = 6,
                        TOMType = "unsigned", minModuleSize = 30,
                        reassignThreshold = 0, mergeCutHeight = 0.25,
                        numericLabels = TRUE, pamRespectsDendro = FALSE,
-                       saveTOMs = TRUE,
-                       saveTOMFileBase = "femaleMouseTOM", 
+                       saveTOMs = FALSE,
                        verbose = 3)
 
 
