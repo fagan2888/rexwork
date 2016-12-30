@@ -5,3 +5,6 @@ data
 CytoscapeInput-nodes.txt
 CytoscapeInput-edges.txt
 Rplots.pdf
+saved.RData
+data
+.ipynb_checkpoints

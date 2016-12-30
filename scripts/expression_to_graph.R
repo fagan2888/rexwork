@@ -13,9 +13,9 @@ options(stringsAsFactors = FALSE);
 print(args[1]);
 femData = read.csv(args[1], sep='\t')
 
-datExpr0 = as.data.frame(t(femData[, -c(1:1)]));
+datExpr0 = as.data.frame(t(femData[, -c(1:2)]));
 names(datExpr0) = femData$gene;
-rownames(datExpr0) = names(femData)[-c(1:1)];
+rownames(datExpr0) = names(femData)[-c(1:2)];
 
 #=====================================================================================
 #
@@ -25,7 +25,7 @@ rownames(datExpr0) = names(femData)[-c(1:1)];
 
 
 gsg = goodSamplesGenes(datExpr0, verbose = 3);
-gsg$allOK
+print(gsg$allOK)
 
 
 #=====================================================================================
@@ -73,7 +73,7 @@ plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="",
 
 
 # Plot a line to show the cut
-cutHeight = 140000
+cutHeight = 14000000
 abline(h = cutHeight, col = "red");
 # Determine cluster under the line
 clust = cutreeStatic(sampleTree, cutHeight = cutHeight, minSize = 10)
@@ -83,6 +83,9 @@ keepSamples = (clust==1)
 datExpr = datExpr0[keepSamples, ]
 nGenes = ncol(datExpr)
 nSamples = nrow(datExpr)
+
+#print("names:", names(datExpr))
+#stop()
 
 
 
@@ -174,10 +177,12 @@ modules = unique(moduleColors)
 probes = names(datExpr)
 inModule = is.finite(match(moduleColors, modules));
 modProbes = probes[inModule];
+#print(modProbes)
 # modGenes = annot$gene_symbol[match(modProbes, annot$substanceBXH)];
 # Select the corresponding Topological Overlap
 modTOM = TOM[inModule, inModule];
 dimnames(modTOM) = list(modProbes, modProbes)
+print("modTOM", modTOM)
 # Export the network into edge and node list files Cytoscape can read
 cyt = exportNetworkToCytoscape(modTOM,
   edgeFile = paste("CytoscapeInput-edges", ".txt", sep=""),
@@ -186,5 +191,7 @@ cyt = exportNetworkToCytoscape(modTOM,
   threshold = 0.02,
   nodeNames = modProbes,
   nodeAttr = moduleColors[inModule]);
+
+save(modTOM, modProbes, moduleColors, inModule, file="saved.RData")
 
 

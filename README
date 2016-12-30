@@ -1,3 +1,18 @@
+# https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE73673
+
+mkdir -p data/GSE73673
+cd data/GSE73673
+wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE73nnn/GSE73673/suppl/GSE73673_RAW.tar
+tar -xvf GSE73673_RAW.tar
+cd -
+python scripts/create_table_from_htcount_files.py data/GSE73673/*.gz > data/GSE73673/whole_table.tsv
+
+Rscript scripts/expression_to_graph.R data/GSE73673/whole_table.tsv
+
+
+#######################
+
+
 mkdir -p data/dm3
 wget -O data/dm3/files.txt https://www.encodeproject.org/batch_download/type%3DExperiment%26status%3Dreleased%26replicates.library.biosample.donor.organism.scientific_name%3DDrosophila%2Bmelanogaster%26assay_title%3DRNA-seq
 cat data/dm3/files.txt | grep "bigWig$" | xargs -n 1 curl -O -L
@@ -19,8 +34,5 @@ Rscript scripts/expression_to_graph.R data/FemaleLiver-Data/GSE90056_ecoli_heats
 
 #############################################3
 
-# https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE73673
-
-python scripts/create_table_from_htcount_files.py data/GSE7363/*.gz > data/GSE7363/whole_table.tsv
 
 

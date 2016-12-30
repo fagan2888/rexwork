@@ -44,13 +44,19 @@ def main():
     #					 help='Another useless option')
 
     args = parser.parse_args()
-    table = pd.read_csv(args.filenames[0], sep=args.sep, header=None)
+    print("args.filenames[0]", args.filenames[0], file=sys.stderr)
+    table = pd.read_csv(args.filenames[0], compression='gzip', sep=args.sep, header=None)
     table.rename(columns={1: filename_only(args.filenames[0])}, inplace=True)
 
     for filename in args.filenames[1:]:
         table = table.merge(pd.read_csv(filename, sep=args.sep, header=None),
                 left_on=0, right_on=0, how='inner')
         table.rename(columns={1: filename_only(filename)}, inplace=True)
+
+    for column in table.columns[1:]:
+        table[column] = table[column].astype(float)
+
+    table.rename(columns={table.columns[0]: 'gene'}, inplace=True)
 
     out = table.to_csv(sep='\t')
     print(out)
