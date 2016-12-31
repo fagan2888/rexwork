@@ -34,15 +34,23 @@ def main():
     #parser.add_argument('-u', '--useless', action='store_true', 
     #					 help='Another useless option')
     parser.add_argument('-w', '--weight-filter', default=None, type=float)
+    parser.add_argument('-s', '--sample-edges', default=None, type=int,
+            help="Sample only n edges from the entire set")
 
     args = parser.parse_args()
 
     nodes = pd.read_csv(args.nodes_file, sep='\t')
     nodes.columns = ['id', 'name', 'color']
 
+    nodes['name'] = nodes['id']
+
     edge_columns = {'fromNode': 'source', 'toNode': 'target', 'weight': 'value'}
 
     edges = pd.read_csv(args.edges_file, sep='\t')
+
+    if args.sample_edges is not None:
+        edges = edges.sample(args.sample_edges)
+
     edges.rename(columns=edge_columns, inplace=True)
 
     if args.weight_filter is not None:

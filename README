@@ -1,3 +1,8 @@
+###########
+Rscript scripts/expression_to_graph.R data/GSE60755_CE_exp.txt
+
+###########
+
 # https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE73673
 
 mkdir -p data/GSE73673
@@ -8,6 +13,8 @@ cd -
 python scripts/create_table_from_htcount_files.py data/GSE73673/*.gz > data/GSE73673/whole_table.tsv
 
 Rscript scripts/expression_to_graph.R data/GSE73673/whole_table.tsv
+
+python scripts/cytoscape_to_json.py  --sample-edges 100 CytoscapeInput-nodes.txt CytoscapeInput-edges.txt  > graph.json
 
 
 #######################
