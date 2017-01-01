@@ -1,5 +1,9 @@
 ###########
-Rscript scripts/expression_to_graph.R data/GSE60755_CE_exp.txt
+python scripts/int_to_float.py data/GSE60755_CE_exp.txt  > data/GSE60755_CE_exp.txt.float
+Rscript scripts/expression_to_graph.R data/GSE60755_CE_exp.txt.float
+
+python scripts/cytoscape_to_json.py  --sample-edges 100 CytoscapeInput-nodes.txt CytoscapeInput-edges.txt  > graph.json
+
 
 ###########
 

@@ -36,22 +36,39 @@ def main():
     parser.add_argument('-w', '--weight-filter', default=None, type=float)
     parser.add_argument('-s', '--sample-edges', default=None, type=int,
             help="Sample only n edges from the entire set")
+    parser.add_argument('-n', '--sample-nodes', default=None, type=int,
+            help="Sample only n nodes from the entire set")
 
     args = parser.parse_args()
+
+    edges = pd.read_csv(args.edges_file, sep='\t')
+    edge_columns = {'fromNode': 'source', 'toNode': 'target', 'weight': 'value'}
+    edges.rename(columns=edge_columns, inplace=True)
 
     nodes = pd.read_csv(args.nodes_file, sep='\t')
     nodes.columns = ['id', 'name', 'color']
 
+    print >>sys.stderr, edges.head()
+
+    if args.sample_nodes is not None:
+        nodes = nodes.sample(args.sample_nodes)
+
+    print >>sys.stderr, "nodes", nodes.head()
+    node_ids = set(nodes['id'])
+
+    #print >>sys.stderr, [e in node_ids for e in edges['source'].values]
+
+    edges = edges[[e in node_ids for e in edges['source'].values]]
+    edges = edges[[e in node_ids for e in edges['target'].values]]
+
+    print >>sys.stderr, "edges:", edges
+
+
     nodes['name'] = nodes['id']
-
-    edge_columns = {'fromNode': 'source', 'toNode': 'target', 'weight': 'value'}
-
-    edges = pd.read_csv(args.edges_file, sep='\t')
 
     if args.sample_edges is not None:
         edges = edges.sample(args.sample_edges)
 
-    edges.rename(columns=edge_columns, inplace=True)
 
     if args.weight_filter is not None:
         edges = edges[edges['value'] > args.weight_filter]
