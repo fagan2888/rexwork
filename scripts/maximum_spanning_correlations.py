@@ -1,11 +1,82 @@
 #!/usr/bin/python
 
+import argparse
 import itertools as it
+import json
 import pandas as pd
+import networkx as nx
 import numpy as np
 import scipy.stats as ss
 import sys
-import argparse
+
+def graph_to_json(G):
+    '''
+    Dump a networkx graph to JSON.
+
+    Args:
+
+    G (A networkx graph): The graph to be dumped.
+
+    Return:
+
+    dictionary: JSON representation of the graph
+    '''
+    nodes = [{'id': n} for n in G.nodes()]
+    edges = [{'source': f, 'target': t, 'value': w } for (f,t,w) in G.edges(data='corr')]
+
+    return {'nodes': nodes, 'links': edges}
+
+
+def create_graph_from_corrs(corrs):
+    '''
+    Create a maximum spanning tree for the list of correlations
+
+    Args:
+    
+    corrs (list of tuples): (corr, from, to)
+
+    Return:
+
+    A networkx graph
+    '''
+    G = nx.Graph()
+    nodes = set()
+
+    corrs = sorted(corrs, key=lambda x: -x[0])
+    print >>sys.stderr, "corrs:", corrs[:10]
+
+    topn = 400
+    count = 0
+    
+
+    for (corr, from_node, to_node) in corrs:
+        if from_node not in nodes or to_node not in nodes:
+            # we haven't seen one of the nodes yet, so we add them
+            G.add_edge(from_node, to_node, corr=corr)
+            nodes.add(from_node)
+            nodes.add(to_node)
+            continue
+
+        if count < topn:
+            count +=1 
+            G.add_edge(from_node, to_node)
+            continue
+
+        try:
+            if nx.bidirectional_dijkstra(G, from_node, to_node):
+                # there's already a path between these nodes
+                # no need to connect them
+                continue
+        except:
+            pass
+
+        G.add_edge(from_node, to_node, corr=abs(corr))
+
+        if len(list(nx.connected_components(G))) == 1:
+            # graph is fully connected, time to go home
+            break
+
+    return G
 
 def main():
     parser = argparse.ArgumentParser(description="""
@@ -39,7 +110,7 @@ def main():
     if args.head is not None:
         matrix = matrix.head(args.head)
 
-    print "matrix:", len(matrix.head().iloc[0].values[1:])
+    #print "matrix:", len(matrix.head().iloc[0].values[1:])
 
     corrs = []
 
@@ -53,7 +124,11 @@ def main():
         if not np.isnan(corr[0]):
             corrs += [(corr[0], row1[0], row2[0])]
 
-        print "corrs:", sorted(corrs, key=lambda x: -x[0])
+        #print "corrs:", sorted(corrs, key=lambda x: -x[0])
+
+    G = create_graph_from_corrs(corrs)
+    graph_json = graph_to_json(G)
+    print json.dumps(graph_json, indent=1)
 
 if __name__ == '__main__':
     main()

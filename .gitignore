@@ -4,7 +4,12 @@ data
 .DS_Store
 CytoscapeInput-nodes.txt
 CytoscapeInput-edges.txt
+CytoscapeInput-nodes-short.txt
+CytoscapeInput-edges-short.txt
 Rplots.pdf
 saved.RData
 data
 .ipynb_checkpoints
+new_gr
+new_graph.json
+graph.json
