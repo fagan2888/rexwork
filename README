@@ -1,3 +1,21 @@
+### Human
+
+
+#### Dataset 1
+
+cat data/GSE52529_fpkm_matrix.txt > data/temp.tsv
+#Rscript scripts/expression_to_graph.R data/GSE52529_fpkm_matrix.txt
+Rscript scripts/expression_to_graph.R data/temp.tsv
+python scripts/cytoscape_to_json.py  CytoscapeInput-nodes.txt CytoscapeInput-edges.txt  > graph.json
+
+#### Dataset 2
+
+cat data/GSE37521_L127_RPM.tab.txt | awk -F $'\t' 'BEGIN {OFS=FS; a="gene\t"; for (i = 1; i < 106; i++) { a = a "s" i "\t"; } print a; } NR>11 { $2=$3=$4=$5=$6=$7=$8=$9=$10"";print }' | grep -v "N/A" | python scripts/int_to_float.py - | head -n 8000 > data/temp.tsv
+Rscript scripts/expression_to_graph.R data/temp.tsv
+python scripts/cytoscape_to_json.py  CytoscapeInput-nodes.txt CytoscapeInput-edges.txt  > graph.json
+
+######
+
 python scripts/maximum_spanning_correlations.py data/GSE60755_CE_exp.txt --delimiter '\t' --head 10 > new_graph.json
 
 ###########

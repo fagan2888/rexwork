@@ -17,17 +17,24 @@ def main():
 
     args = parser.parse_args()
 
-    with open(args.expr_file, 'r') as f:
-        for line in f:
-            parts = line.strip().split('\t')
-            new_parts = []
-            for part in parts:
-                try:
-                    ipart = int(part)
-                    new_parts += [float(part)]
-                except ValueError:
-                    new_parts += [part]
+    if args.expr_file == '-':
+        f = sys.stdin
+    else:
+        f = open(args.expr_file, 'r')
+
+    for line in f:
+        parts = line.strip().split('\t')
+        new_parts = []
+        for part in parts:
+            try:
+                ipart = int(part)
+                new_parts += [float(part)]
+            except ValueError:
+                new_parts += [part]
+        try:
             print("\t".join(map(str,new_parts)))
+        except IOError:
+            continue
     
 
 if __name__ == '__main__':
